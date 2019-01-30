@@ -21,8 +21,8 @@ clean: ## Clean build files
 	find . -name '*.pyc' -delete
 	docker-compose -f docker-compose.yml stop
 	docker-compose -f docker-compose.yml rm --force
-	docker volume rm challenge_timescaledb-data | true
-	docker volume rm challenge_postgres-data | true
+	docker volume rm timescalebenchmark_postgres-data| true
+	docker volume rm timescalebenchmark_timescaledb-data | true
 
 dev: ## Bring up dev environment
 	docker-compose -f docker-compose.yml up -d
@@ -31,5 +31,5 @@ dev: ## Bring up dev environment
 db: ## Bring up dev environment and connect to db
 	docker-compose -f docker-compose.yml up -d
 	sleep 2
-	docker exec -it challenge_timescaledb_1 psql -U postgres homework -c "\d"
-	docker exec -it challenge_timescaledb_1 psql -U postgres homework -c "select count(*) from cpu_usage;"
+	docker exec -it timescalebenchmark_timescaledb_1 psql -U postgres homework -c "\d"
+	docker exec -it timescalebenchmark_timescaledb_1 psql -U postgres homework -c "select count(*) from cpu_usage;"
