@@ -44,6 +44,11 @@ TODO: get psycopgreen working with celery tasks to use -P eventlet or -P gevent
 Usage
 =========
 
+To get environment up and running use the command:
+
+	make dev
+
+Once docker containers are built via docker-compose then you can
 POST data to /cpu/stats with the form parameters as follows:
 
 - data = your query_params.csv file for generating queries
