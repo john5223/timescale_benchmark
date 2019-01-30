@@ -100,6 +100,12 @@ Example:
 	}
 
 
+Stats are generated from :
+
+https://github.com/john5223/timescale_benchmark/blob/master/worker_simple/server/controller/tasks.py#L99
+
+Flower is running on http://localhost:5555 which will show running tasks.
+
 
 Results
 ========
