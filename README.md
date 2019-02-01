@@ -59,7 +59,7 @@ POST data to /cpu/stats with the form parameters as follows:
 
 Example:
 
-	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "async=False" -F77 "db=postgres" localhost:5000/cpu_stats
+	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "async=False" -F "db=postgres" localhost:5000/cpu_stats
 	{
 	  "db": "postgres",
 	  "number_runs": 10,
