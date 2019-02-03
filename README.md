@@ -198,6 +198,18 @@ Try and build a golang worker than integrates with celery / airflow (don't want 
 
 ## Links
 
+https://www.topsqlblogs.com/
+
+https://github.com/OmniDB/OmniDB
+
+https://blog.2ndquadrant.com/pg-phriday-getting-rad-docker/
+
+https://blog.2ndquadrant.com/pg-phriday-getting-rad-docker-part-2/
+
+https://blog.2ndquadrant.com/pg-phriday-getting-rad-docker-part-3/
+
+https://blog.2ndquadrant.com/pg-phriday-getting-rad-docker-part-4/
+
 https://medium.com/@taylorhughes/three-quick-tips-from-two-years-with-celery-c05ff9d7f9eb
 
 https://github.com/rochacbruno/flasgger/blob/master/examples//example_app.py
