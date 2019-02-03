@@ -110,13 +110,14 @@ def query_stats(csv=None, db=None, client=None, loadbalance=None, number_runs=No
     # Docs for groups and chords within celery are here:
     # http://docs.celeryproject.org/en/latest/userguide/canvas.html#groups
     job = group(tasks * number_runs)
-    stats = task_query_stats.signature(kwargs={'db': db}, options={'queue': 'stats'})
+    job_details = {'db': db, 'client': client}
+    stats = task_query_stats.signature(kwargs=job_details, options={'queue': 'stats'})
     chord_task = chord(job)(stats)
     return chord_task
 
 
 @celery.task(bind=True, soft_time_limit=600)
-def task_query_stats(self, task_results, db=None):
+def task_query_stats(self, task_results, db=None, client=None):
     task_runtimes, task_results = zip(*task_results)
     logger.info(task_runtimes)
 
@@ -131,6 +132,7 @@ def task_query_stats(self, task_results, db=None):
         ret = runtime_stats._asdict()
         ret['total_querytime'] = task_runtimes.sum()
         ret['db'] = db
+        ret['client'] = client
         return ret
 
     except ImportError as e:
@@ -178,7 +180,7 @@ def sqlalchemy_query_cpu_stats(db_session, data):
 
 @celery.task(base=PostgresTask, bind=True, soft_time_limit=600)
 def postgres_cpu_stats(self, data):
-    logger.info("Postgres query")
+    logger.info("Postgres psycopg2 query")
     cursor = self.db.cursor()
     result = query_cpu_stats(cursor, data)
     return result
@@ -186,7 +188,7 @@ def postgres_cpu_stats(self, data):
 
 @celery.task(base=TimescaleTask, bind=True, soft_time_limit=600)
 def timescaledb_cpu_stats(self, data):
-    logger.info("Timescaledb query")
+    logger.info("Timescaledb psycopg2 query")
     cursor = self.db.cursor()
     result = query_cpu_stats(cursor, data)
     return result
@@ -194,7 +196,7 @@ def timescaledb_cpu_stats(self, data):
 
 @celery.task(base=SQLAlchemyTask, bind=True, soft_time_limit=600)
 def sqlalchemy_cpu_stats(self, data):
-    logger.info("Sqlalchemy query")
+    logger.info("Postgres sqlalchemy query")
     result = sqlalchemy_query_cpu_stats(self.db_session, data)
     return result
 

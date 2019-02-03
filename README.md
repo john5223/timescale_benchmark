@@ -59,61 +59,128 @@ POST data to /cpu/stats with the form parameters as follows:
 
 Example:
 
-	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "wait_for_return=True" -F "db=postgres" localhost:5000/cpu_stats
+
+	desktop 福 ~/git/john/timescale_benchmark ➤ 08d5528|master⚡
+	249 ± : curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=7" -F "wait_for_return=True" -F "db=postgres" -F "client=sqlalchemy" localhost:5000/cpu_stats
+
 	{
 	  "db": "postgres",
-	  "number_runs": 10,
+	  "endpoint": "http://localhost:5000/cpu_stats/8097ef44-6f0b-4d5e-bcec-cd04e529197e",
+	  "number_runs": 7,
 	  "result": {
-	    "kurtosis": 1.1310037343955148,
-	    "mean": 0.077074878,
+	    "kurtosis": 0.9745369709248504,
+	    "mean": 0.28278166285714285,
 	    "minmax": [
-	      0.020368,
-	      0.204731
+	      0.065737,
+	      0.793913
 	    ],
-	    "nobs": 2000,
-	    "skewness": 0.8921114157233603,
-	    "total_querytime": 154.149756,
-	    "variance": 0.0007089277304803561
+	    "nobs": 1400,
+	    "skewness": 0.9399346706621935,
+	    "total_querytime": 395.894328,
+	    "variance": 0.01198067500476402
 	  },
 	  "state": "SUCCESS",
-	  "task_id": "2c7feb83-5500-4274-a898-e8adb74f16be"
+	  "task_id": "8097ef44-6f0b-4d5e-bcec-cd04e529197e"
 	}
 
 
-	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "wait_for_return=True" -F "db=timescaledb" localhost:5000/cpu_stats
+	desktop 福 ~/git/john/timescale_benchmark ➤ 08d5528|master⚡
+	250 ± : curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=7" -F "wait_for_return=True" -F "db=postgres" -F "client=psycopg2" localhost:5000/cpu_stats
+
+	{
+	  "db": "postgres",
+	  "endpoint": "http://localhost:5000/cpu_stats/c754cfcb-0067-4f09-bc48-10fa255f579b",
+	  "number_runs": 7,
+	  "result": {
+	    "kurtosis": 0.43178245703551044,
+	    "mean": 0.2817891707142857,
+	    "minmax": [
+	      0.060597,
+	      0.816402
+	    ],
+	    "nobs": 1400,
+	    "skewness": 0.8219990308126535,
+	    "total_querytime": 394.504839,
+	    "variance": 0.013859435964148818
+	  },
+	  "state": "SUCCESS",
+	  "task_id": "c754cfcb-0067-4f09-bc48-10fa255f579b"
+	}
+
+
+	desktop 福 ~/git/john/timescale_benchmark ➤ 08d5528|master⚡
+	251 ± : curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=7" -F "wait_for_return=True" -F "db=timescaledb" -F "client=psycopg2" localhost:5000/cpu_stats
+
 	{
 	  "db": "timescaledb",
-	  "number_runs": 10,
+	  "endpoint": "http://localhost:5000/cpu_stats/96ad62c0-f1e1-4538-9691-3ccba92067b9",
+	  "number_runs": 7,
 	  "result": {
-	    "kurtosis": 8.55457982291601,
-	    "mean": 0.009513939499999999,
+	    "kurtosis": 0.5540491207683771,
+	    "mean": 0.06270433714285714,
 	    "minmax": [
-	      0.004814,
-	      0.04515
+	      0.008559,
+	      0.206954
 	    ],
-	    "nobs": 2000,
-	    "skewness": 1.9600806771624373,
-	    "total_querytime": 19.027879,
-	    "variance": 1.1452820913296399e-05
+	    "nobs": 1400,
+	    "skewness": 0.783589606602244,
+	    "total_querytime": 87.78607199999999,
+	    "variance": 0.0010947982948626652
 	  },
 	  "state": "SUCCESS",
-	  "task_id": "5056fc5e-bef6-403e-b768-44043c546421"
+	  "task_id": "96ad62c0-f1e1-4538-9691-3ccba92067b9"
+	}
+
+	desktop 福 ~/git/john/timescale_benchmark ➤ 08d5528|master⚡
+	273 ± : curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=7" -F "wait_for_return=True" -F "db=timescaledb" -F "client=sqlalchemy" localhost:5000/cpu_stats
+
+	{
+	  "client": "sqlalchemy",
+	  "db": "timescaledb",
+	  "endpoint": "http://localhost:5000/cpu_stats/4cdfdd8a-88f4-40bf-afed-01302b88c5ec",
+	  "number_runs": 7,
+	  "result": {
+	    "kurtosis": 6.789417276941661,
+	    "mean": 0.008490127142857143,
+	    "minmax": [
+	      0.00278,
+	      0.044303
+	    ],
+	    "nobs": 1400,
+	    "skewness": 2.1486667352394404,
+	    "total_querytime": 11.886178,
+	    "variance": 2.3671069736503624e-05
+	  },
+	  "state": "SUCCESS",
+	  "task_id": "4cdfdd8a-88f4-40bf-afed-01302b88c5ec"
 	}
 
 
-Stats are generated from :
-
-https://github.com/john5223/timescale_benchmark/blob/master/worker_simple/server/controller/tasks.py#L99
 
 Flower is running on http://localhost:5555 which will show running tasks.
-
 
 Results
 ========
 
-Timescaledb can do in 19 seconds what postgres takes 154 seconds to complete.
+Experiment 1:
 
-Nice! Auto time scaled partitions are awesome!
+	data file:     data/query_params.csv
+	number_runs:   7
+
+	Total run time in seconds:
+
+	Postgres with psycopg2      =    394.504839
+	Postgres with sqlalchemy    =    395.894328
+
+	Timescaledb with psycopg2   =    87.7860719
+	Timescaledb with sqlalchemy =    11.8861780
+
+
+Timescaledb beats postgres.
+
+Even further speed up when using sqlalchemy over psycopg2 due to the free connection pooling provided by sqlalchemy.
+
+Auto time scaled paritions are awesome!
 
 
 

@@ -121,6 +121,7 @@ def view_start_cpu_query():
     if wait_for_return:
         ret['result'] = task.get()
         ret['db'] = ret['result'].pop('db', None)
+        ret['client'] = ret['result'].pop('client', None)
         ret['state'] = task.state
     return jsonify(ret), 202
 

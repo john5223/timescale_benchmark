@@ -11,8 +11,6 @@ from sqlalchemy.orm import sessionmaker
 import logging
 logger = logging.getLogger(__name__)
 
-engine = None
-
 class PostgresTask(Task):
     abstract = True
     _db = None
@@ -57,6 +55,8 @@ class TimescaleTask(PostgresTask):
 # class SQLAlchemySingleton
 
 
+ALCHEMY_ENGINES = {}
+ALCHEMY_SESSIONS = {}
 
 class SQLAlchemyTask(Task):
     abstract = True
@@ -71,10 +71,13 @@ class SQLAlchemyTask(Task):
         if self._db_session is not None:
             return self._db_session
 
-        global engine
+        global ALCHEMY_ENGINES
+        global ALCHEMY_SESSIONS
+
+        engine = ALCHEMY_ENGINES.get(self.db_host)
         if not engine:
             conn_string = "postgresql://{user}:{password}@{host}:{port}/{dbname}".format(
-                host=self.app.conf.POSTGRES_HOST,
+                host=self.db_host,
                 port=self.app.conf.POSTGRES_PORT or '5432',
                 dbname=self.app.conf.POSTGRES_DBNAME,
                 user=self.app.conf.POSTGRES_USER,
@@ -82,18 +85,22 @@ class SQLAlchemyTask(Task):
             )
             logger.info("Creating engine")
             logger.info(conn_string)
-            tasks_engine = create_engine(
+            engine = create_engine(
                 conn_string, convert_unicode=True,
                 pool_recycle=3600, pool_size=10)
-            engine = tasks_engine
-        else:
-            tasks_engine = engine
+            ALCHEMY_ENGINES[self.db_host] = engine
 
-        logger.info("Creating session")
-        db_session = scoped_session(sessionmaker(
-            autocommit=False, autoflush=False, bind=tasks_engine))
-        self._db_session = db_session
-        return self._db_session
+        session = ALCHEMY_SESSIONS.get(self.db_host)
+        if not session:
+            logger.info("Creating session")
+            db_session = scoped_session(sessionmaker(
+                autocommit=False, autoflush=False, bind=engine))
+            ALCHEMY_SESSIONS[self.db_host] = db_session
+            self._db_session = db_session
+            return self._db_session
+        else:
+            self._db_session = session
+            return self._db_session
 
     def after_return(self, status, retval, task_id, args, kwargs, einfo):
         """
