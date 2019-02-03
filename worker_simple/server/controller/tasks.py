@@ -107,9 +107,6 @@ def query_stats(csv=None, db=None, client=None, loadbalance=None, number_runs=No
                 task = cpu_stats.signature(kwargs={'data': row})
             tasks.append(task)
 
-            if len(tasks) > 8:
-                break
-
     # Docs for groups and chords within celery are here:
     # http://docs.celeryproject.org/en/latest/userguide/canvas.html#groups
     job = group(tasks * number_runs)
