@@ -26,6 +26,9 @@ celery = Celery(__name__, autofinalize=False)
 class UnknownDB(Exception):
     pass
 
+class UnknownDBClient(Exception):
+    pass
+
 
 def query_stats(csv=None, db=None, client=None, loadbalance=None, number_runs=None):
     if not number_runs:
@@ -43,12 +46,15 @@ def query_stats(csv=None, db=None, client=None, loadbalance=None, number_runs=No
             cpu_stats = postgres_cpu_stats
         elif client == "sqlalchemy":
             cpu_stats = sqlalchemy_cpu_stats
-
+        else:
+            raise UnknownDBClient(client)
     elif db == "timescaledb":
         if client == "psycopg2":
             cpu_stats = timescaledb_cpu_stats
         elif client == "sqlalchemy":
             cpu_stats = timescalealchemy_cpu_stats
+        else:
+            raise UnknownDBClient(client)
     else:
         raise UnknownDB(db)
     logger.info("Database: {}".format(db))

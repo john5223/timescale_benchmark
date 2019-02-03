@@ -2,7 +2,7 @@ import logging
 from flask import Flask, flash, jsonify, Blueprint
 from flask import request
 from server.controller import tasks
-from server.controller.tasks import UnknownDB
+from server.controller.tasks import UnknownDB, UnknownDBClient
 
 from flasgger.utils import swag_from
 
@@ -106,6 +106,8 @@ def view_start_cpu_query():
         task = tasks.query_stats(**kwargs)
     except UnknownDB as e:
         return jsonify({"status": "error", "error": "Unknown database: {}".format(e)}), 400
+    except UnknownDBClient as e:
+        return jsonify({"status": "error", "error": "Unknown database client: {}".format(e)}), 400
 
     logger.info('return task...')
     ret = {
