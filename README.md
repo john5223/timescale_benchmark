@@ -54,12 +54,12 @@ POST data to /cpu/stats with the form parameters as follows:
 - data = your query_params.csv file for generating queries
 - number_runs = number of times you want to duplicate the tasks created
 - db = set to either postgres or timescaledb
-- async = set to false to get result returned or True to poll cpu_stats/<task_id> for results
+- wait_for_return = set to true to get results returned or default is false which returns immediately and you have to poll cpu_stats/<task_id> for results
 
 
 Example:
 
-	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "async=False" -F "db=postgres" localhost:5000/cpu_stats
+	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "wait_for_return=True" -F "db=postgres" localhost:5000/cpu_stats
 	{
 	  "db": "postgres",
 	  "number_runs": 10,
@@ -79,7 +79,8 @@ Example:
 	  "task_id": "2c7feb83-5500-4274-a898-e8adb74f16be"
 	}
 
-	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "async=False" -F "db=timescaledb" localhost:5000/cpu_stats
+
+	福 curl -X POST -F 'data=@data/query_params.csv' -F "number_runs=10" -F "wait_for_return=True" -F "db=timescaledb" localhost:5000/cpu_stats
 	{
 	  "db": "timescaledb",
 	  "number_runs": 10,

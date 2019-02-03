@@ -48,8 +48,22 @@ def view_start_cpu_query():
           type: string
           format: uuid
         required: false
+      - in: header
+        name: number_runs
+        description: The number of times to run the same queries (to increase load for benchmark)
+        schema:
+          type: string
+          format: uuid
+        required: false
+      - in: header
+        name: db
+        description: Which db to run against (timescaledb or postgres)
+        schema:
+          type: string
+          format: uuid
+        required: false
       - in: formData
-        name: upfile
+        name: data
         type: file
         description: The file to upload.
     responses:
@@ -95,9 +109,12 @@ def view_start_cpu_query():
     ret = {
         'task_id': task.id,
         'state': task.state,
-        'number_runs': kwargs['number_runs']
+        'number_runs': kwargs['number_runs'],
+        'endpoint': request.url + "/" + task.id
     }
-    if bool(request.form.get('async', 'True')):
+
+    wait_for_return = request.form.get('wait_for_return') in ['true', 'True']
+    if wait_for_return:
         ret['result'] = task.get()
         ret['db'] = ret['result'].pop('db', None)
         ret['state'] = task.state

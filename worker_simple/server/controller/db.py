@@ -4,6 +4,10 @@ from celery import Task
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class PostgresTask(Task):
     abstract = True
@@ -17,6 +21,8 @@ class PostgresTask(Task):
     def db(self):
         if self._db is not None:
             return self._db
+
+        logger.info("Connecting to {}".format(self.db_host))
         self._db = psycopg2.connect(
             host=self.db_host,
             port=self.app.conf.POSTGRES_PORT,
