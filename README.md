@@ -210,6 +210,9 @@ https://blog.2ndquadrant.com/pg-phriday-getting-rad-docker-part-3/
 
 https://blog.2ndquadrant.com/pg-phriday-getting-rad-docker-part-4/
 
+https://github.com/brainsam/pgbouncer
+
+
 https://medium.com/@taylorhughes/three-quick-tips-from-two-years-with-celery-c05ff9d7f9eb
 
 https://github.com/rochacbruno/flasgger/blob/master/examples//example_app.py

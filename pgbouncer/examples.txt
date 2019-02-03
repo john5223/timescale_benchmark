@@ -1,0 +1,10 @@
+https://github.com/edoburu/docker-pgbouncer
+
+https://github.com/brainsam/pgbouncer
+
+https://github.com/tophfr/docker-pgbouncer
+
+https://github.com/compose-ex/compose-pgbouncer-example
+
+https://www.compose.com/articles/how-to-pool-postgresql-connections-with-pgbouncer/
+
