@@ -21,4 +21,4 @@ COPY server ./server/
 COPY entrypoint_api.py ./
 COPY entrypoint_celery.py ./
 
-#ENTRYPOINT celery -A controller.tasks worker --loglevel=info 
+#ENTRYPOINT celery -A controller.tasks worker --loglevel=info

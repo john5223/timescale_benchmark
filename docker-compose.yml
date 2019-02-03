@@ -31,7 +31,7 @@ services:
 
   worker_a:
     build: ./worker_simple
-    command: celery worker -A entrypoint_celery.celery -P eventlet --concurrency=8 --loglevel=info -Ofair -Q QueueA
+    command: celery worker -A entrypoint_celery.celery --concurrency=8 --loglevel=info -Ofair -Q QueueA
     volumes:
       - "./worker_simple/server:/app/server"
     env_file:
@@ -43,7 +43,7 @@ services:
 
   worker_b:
     build: ./worker_simple
-    command: celery worker -A entrypoint_celery.celery -P eventlet --concurrency=8 --loglevel=info -Ofair -Q QueueB
+    command: celery worker -A entrypoint_celery.celery --concurrency=8 --loglevel=info -Ofair -Q QueueB
     volumes:
       - "./worker_simple/server:/app/server"
     env_file:

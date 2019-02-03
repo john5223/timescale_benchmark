@@ -97,6 +97,8 @@ def view_start_cpu_query():
     kwargs = {
       'csv': csv,
       'db': request.form.get('db', 'timescaledb'),
+      'client': request.form.get('client', 'psycopg2'),
+      #'client': request.form.get('client', 'sqlalchemy'),
       'loadbalance': request.form.get('loadbalance', True),
       'number_runs': int(request.form.get('number_runs', 1))
     }

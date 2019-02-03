@@ -4,6 +4,7 @@ numpy
 scipy
 requests
 eventlet
+sqlalchemy
 
 # Swagger API docs
 flasgger

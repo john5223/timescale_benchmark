@@ -22,7 +22,7 @@ worker_prefetch_multiplier = 1
 
 TIMESCALEDB_HOST = os.environ.get('TIMESCALEDB_HOST')
 POSTGRES_HOST = os.environ.get('POSTGRES_HOST')
-POSTGRES_PORT = os.environ.get('POSTGRES_PORT')
+POSTGRES_PORT = os.environ.get('POSTGRES_PORT', '5432')
 POSTGRES_DBNAME = os.environ.get('POSTGRES_DBNAME')
 POSTGRES_USER = os.environ.get('POSTGRES_USER')
 POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')

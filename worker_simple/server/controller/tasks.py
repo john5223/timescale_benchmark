@@ -15,6 +15,11 @@ from celery import group, chord
 from server.controller.db import PostgresTask
 from server.controller.db import TimescaleTask
 
+from server.controller.db import SQLAlchemyTask
+from server.controller.db import TimescaleAlchemyTask
+
+
+
 logger = logging.getLogger()
 celery = Celery(__name__, autofinalize=False)
 
@@ -22,21 +27,32 @@ class UnknownDB(Exception):
     pass
 
 
-
-def query_stats(csv=None, db=None, loadbalance=None, number_runs=None):
+def query_stats(csv=None, db=None, client=None, loadbalance=None, number_runs=None):
     if not number_runs:
         number_runs = 1
     if not db:
         db = "timescaledb"
+    logger.info(client)
+    if client is None:
+        client = "psycopg2"
+        #client = "sqlalchemy"
 
     cpu_stats = None
     if db == "postgres":
-        cpu_stats = postgres_cpu_stats
+        if client == "psycopg2":
+            cpu_stats = postgres_cpu_stats
+        elif client == "sqlalchemy":
+            cpu_stats = sqlalchemy_cpu_stats
+
     elif db == "timescaledb":
-        cpu_stats = timescaledb_cpu_stats
+        if client == "psycopg2":
+            cpu_stats = timescaledb_cpu_stats
+        elif client == "sqlalchemy":
+            cpu_stats = timescalealchemy_cpu_stats
     else:
         raise UnknownDB(db)
     logger.info("Database: {}".format(db))
+    logger.info("Client: {}".format(client))
 
     csv = csv.split('\n')
     # Figure out queues for load balancing
@@ -47,11 +63,11 @@ def query_stats(csv=None, db=None, loadbalance=None, number_runs=None):
         MAX_QUEUE_INDEX = len(QUEUE_NAMES) - 1
         logger.info(QUEUE_NAMES)
 
-    # TODO: Should we have form data set this too? 
+    # TODO: Should we have form data set this too?
     LOADBALANCE_KEY = 'hostname'
     # TODO: move this lookup to redis queue so all worker instances
     # will send to the same queue/exchange
-    # (if needed) 
+    # (if needed)
     LOADBALANCE_KEY_LOOKUP = {}
     queue_index = 0
 
@@ -85,13 +101,14 @@ def query_stats(csv=None, db=None, loadbalance=None, number_runs=None):
                 task = cpu_stats.signature(kwargs={'data': row})
             tasks.append(task)
 
+            if len(tasks) > 8:
+                break
+
     # Docs for groups and chords within celery are here:
     # http://docs.celeryproject.org/en/latest/userguide/canvas.html#groups
     job = group(tasks * number_runs)
     stats = task_query_stats.signature(kwargs={'db': db}, options={'queue': 'stats'})
     chord_task = chord(job)(stats)
-
-    #logger.info( chord_task.get() )
     return chord_task
 
 
@@ -121,9 +138,9 @@ def task_query_stats(self, task_results, db=None):
             'avg': avg(task_runtimes)
         }
 
-def get_cpu_stats(cursor, data):
+def query_cpu_stats(cursor, data):
     # measure query time here so only measure
-    # the database query and not celery 
+    # the database query and not celery
     task_start = datetime.datetime.now()
     host, start, end = data
     q = ('SELECT avg(usage) '
@@ -136,20 +153,53 @@ def get_cpu_stats(cursor, data):
     return (task_time, result,)
 
 
+def sqlalchemy_query_cpu_stats(db_session, data):
+    task_start = datetime.datetime.now()
+    #host, start, end = data
+    params = {
+        'host': data[0],
+        'start': data[1],
+        'end': data[2]
+    }
+    q = ('SELECT avg(usage) '
+         'FROM cpu_usage '
+         'WHERE host = :host AND ts > :start and ts < :end')
+    logger.info(q)
+    result = db_session.execute(q, params).fetchone()
+    result = result.items()
+    if result:
+        result = result[0][1]
+    task_time = (datetime.datetime.now() - task_start).total_seconds()
+    return (task_time, result,)
+
+
 @celery.task(base=PostgresTask, bind=True, soft_time_limit=600)
 def postgres_cpu_stats(self, data):
     logger.info("Postgres query")
     cursor = self.db.cursor()
-    result = get_cpu_stats(cursor, data)
+    result = query_cpu_stats(cursor, data)
     return result
+
 
 @celery.task(base=TimescaleTask, bind=True, soft_time_limit=600)
 def timescaledb_cpu_stats(self, data):
     logger.info("Timescaledb query")
     cursor = self.db.cursor()
-    result = get_cpu_stats(cursor, data)
+    result = query_cpu_stats(cursor, data)
     return result
 
+
+@celery.task(base=SQLAlchemyTask, bind=True, soft_time_limit=600)
+def sqlalchemy_cpu_stats(self, data):
+    logger.info("Sqlalchemy query")
+    result = sqlalchemy_query_cpu_stats(self.db_session, data)
+    return result
+
+@celery.task(base=TimescaleAlchemyTask, bind=True, soft_time_limit=600)
+def timescalealchemy_cpu_stats(self, data):
+    logger.info("Timescale sqlalchemy query")
+    result = sqlalchemy_query_cpu_stats(self.db_session, data)
+    return result
 
 @celery.task(bind=True)
 def wait_task(self, sleep_time):
@@ -165,18 +215,6 @@ def add(self, a, b):
         x = x - 1
         time.sleep(2)
     return a+b
-
-
-
-def report():
-    '''
-    Report on 
-        - number of queries processed
-        - total processing time of all queries
-        - min, median, average, max query times
-    '''
-
-    pass
 
 
 '''
