@@ -1,0 +1,24 @@
+Flask
+sanic
+flasgger
+
+psycopg2
+psycogreen
+
+requests
+eventlet
+sqlalchemy
+
+gunicorn==19.8.*
+
+redis==2.10.*
+celery==4.1.*
+flower
+
+# Forms.
+#Flask-WTF==0.14.*
+#WTForms-Components==0.9.*
+
+# Extensions.
+flask-debugtoolbar==0.10.*
+#Flask-Mail==0.9.*

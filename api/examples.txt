@@ -1,0 +1,13 @@
+
+
+openapi / swagger api framework
+	- https://github.com/encode/apistar
+
+asyncio framework
+	- https://www.starlette.io/
+	- https://sanicframework.org/
+		- https://github.com/huge-success/sanic
+
+https://github.com/falconry/falcon
+	- Only 2 minor dependencies
+	- 109,000 req/sec

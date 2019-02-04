@@ -4,7 +4,7 @@
 
 PG_LOG=/var/log/pgbouncer
 PG_CONFIG_DIR=/etc/pgbouncer
-PG_USER=postgres
+PG_USER=${POSTGRES_USER}
 
 if [ ! -f ${PG_CONFIG_DIR}/pgbouncer.ini ]; then
   echo "create pgbouncer config in ${PG_CONFIG_DIR}"

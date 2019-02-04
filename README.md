@@ -198,8 +198,9 @@ Try and build a golang worker than integrates with celery / airflow (don't want 
 
 ## Links
 
-https://medium.com/@shauns/eventlet-vs-asyncio-2146ce019c8d
+https://github.com/ZoomerAnalytics/python-celery-task-routing
 
+https://medium.com/@shauns/eventlet-vs-asyncio-2146ce019c8d
 
 https://www.topsqlblogs.com/
 

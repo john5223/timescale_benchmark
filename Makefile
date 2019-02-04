@@ -34,3 +34,7 @@ db: ## Bring up dev environment and connect to db
 	docker exec -it timescalebenchmark_timescaledb_1 psql -U postgres homework -c "\d"
 	docker exec -it timescalebenchmark_timescaledb_1 psql -U postgres homework -c "select count(*) from cpu_usage;"
 
+advanced:
+	docker-compose -f docker-compose-advanced.yml build
+	docker-compose -f docker-compose-advanced.yml up -d
+	docker ps

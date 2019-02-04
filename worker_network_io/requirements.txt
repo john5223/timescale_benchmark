@@ -1,0 +1,10 @@
+psycopg2
+psycogreen
+sqlalchemy
+
+requests
+eventlet
+
+redis==2.10.*
+celery==4.1.*
+flower
