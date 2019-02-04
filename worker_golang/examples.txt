@@ -1,3 +1,6 @@
+
+https://github.com/mickep76/alpine-golang/blob/master/Dockerfile
+
 https://github.com/Docker-example/golang-webserver
 
 https://github.com/infoslack/go-microservice
@@ -24,3 +27,4 @@ https://eng.uber.com/cherami/
 
 
 https://github.com/svcavallar/celeriac.v1
+

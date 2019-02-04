@@ -189,6 +189,21 @@ TODO
 
 Seperate numpy worker and lightweight worker from the api (Dockerfile)
 
+Current image sizes:
+
+	福 docker images | head -n20
+	REPOSITORY                         TAG                 IMAGE ID            CREATED             SIZE
+	timescalebenchmark_flower          latest              ce7af0718d5c        About an hour ago   390MB
+	timescalebenchmark_api             latest              414eb2b1df59        About an hour ago   442MB
+	timescalebenchmark_worker_stats    latest              d119719b9364        30 minutes ago      895MB
+	timescalebenchmark_worker_a        latest              ce7af0718d5c        About an hour ago   390MB
+	timescalebenchmark_worker_b        latest              ce7af0718d5c        About an hour ago   390MB
+	timescalebenchmark_worker_golang   latest              769df81e03d3        16 months ago       257MB
+	redis                              alpine              95f0c755feb6        4 days ago          40.9MB
+	python                             3.6-alpine          de35df1f34dd        4 days ago          74.5MB
+	postgres                           latest              d03e2a8f3ed4        4 days ago          312MB
+	timescale/timescaledb              latest-pg10         7e9955d3c0f7        5 days ago          87.8MB
+
 Call tasks using signatures instead of importing the tasks from the api.
 
 Do this so we can have small api container, small worker container, and heavy numpy worker container seperate so we can scale them differently.

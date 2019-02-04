@@ -29,6 +29,18 @@ services:
     container_name: redis
     ports: ["6379"]
 
+  worker_golang:
+    build: ./worker_golang
+    command: sleep 10
+    volumes:
+      - "./worker_simple/server:/app/server"
+    env_file:
+      - dev.env
+    depends_on:
+      - "redis"
+      - "postgres"
+      - "timescaledb"
+
   worker_a:
     build: ./worker_network_io
     command: celery worker -A entrypoint_celery.celery --concurrency=8 --loglevel=info -Ofair -Q QueueA
