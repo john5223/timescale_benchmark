@@ -12,6 +12,10 @@ Columns of data are: hostname, timestamp, cpu_usage
 
 This project sets up a flask api to run tasks to query postgres/timescaledb database. Queries are generated from a csv input file of timestamps to query an average for. Time it takes to query database is returned from the task and aggregated inside a different worker.
 
+Currently working off of code in `worker_simple`
+
+All other directories are for expanding this project into different types of workers.
+
 Docker containers:
 
 	- api
