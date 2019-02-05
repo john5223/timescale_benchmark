@@ -20,9 +20,6 @@ services:
       - ./sql/cpu_usage.csv:/docker-entrypoint-initdb.d/cpu_usage.csv
     env_file:
       - dev.env
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
 
   redis:
     image: redis:alpine
@@ -90,9 +87,8 @@ services:
       - "5555:5555"
     entrypoint: flower
     command:  -A entrypoint_celery.celery --port=5555
-    environment:
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    env_file:
+      - dev.env
     depends_on:
       - "redis"
       - "postgres"
