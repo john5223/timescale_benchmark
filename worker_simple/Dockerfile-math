@@ -3,7 +3,7 @@ FROM python:3.6-alpine
 WORKDIR /app
 
 # For psycopg2
-RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev g++ make
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 
 # For scipy
 RUN apk add gcc gfortran build-base wget freetype-dev libpng-dev openblas-dev
@@ -11,14 +11,21 @@ RUN apk add gcc gfortran build-base wget freetype-dev libpng-dev openblas-dev
 RUN pip install --upgrade pip
 
 # scipy build needs numpy installed first
+# also good to cache these heavy compiles
 RUN pip install numpy
 RUN pip install scipy
+RUN pip install pandas
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-#COPY server ./server/
-#COPY entrypoint_api.py ./
-#COPY entrypoint_celery.py ./
+RUN apk add --update libxml2-dev libxslt-dev
+
+COPY requirements-math.txt .
+RUN pip install -r requirements-math.txt
+
+COPY server ./server/
+COPY entrypoint_api.py ./
+COPY entrypoint_celery.py ./
 
 #ENTRYPOINT celery -A controller.tasks worker --loglevel=info

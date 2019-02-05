@@ -19,9 +19,9 @@ from server.controller.db import SQLAlchemyTask
 from server.controller.db import TimescaleAlchemyTask
 
 
-
 logger = logging.getLogger()
 celery = Celery(__name__, autofinalize=False)
+
 
 class UnknownDB(Exception):
     pass
@@ -101,10 +101,10 @@ def query_stats(csv=None, db=None, client=None, loadbalance=None, number_runs=No
                     if queue_index > MAX_QUEUE_INDEX:
                         queue_index = 0
                     LOADBALANCE_KEY_LOOKUP[key] = queue_name
-                task = cpu_stats.signature(kwargs={'data': row},
+                task = cpu_stats.signature(kwargs={'data': row_data},
                                            queue=queue_name)
             else:
-                task = cpu_stats.signature(kwargs={'data': row})
+                task = cpu_stats.signature(kwargs={'data': row_data})
             tasks.append(task)
 
     # Docs for groups and chords within celery are here:
@@ -143,16 +143,16 @@ def task_query_stats(self, task_results, db=None, client=None):
             'avg': avg(task_runtimes)
         }
 
+
 def query_cpu_stats(cursor, data):
     # measure query time here so only measure
     # the database query and not celery
     task_start = datetime.datetime.now()
-    host, start, end = data
     q = ('SELECT avg(usage) '
          'FROM cpu_usage '
          'WHERE host = %s AND ts > %s and ts < %s')
     logger.info(q)
-    cursor.execute(q, (host, start, end,))
+    cursor.execute(q, (data['hostname'], data['start_time'], data['end_time'],))
     result = cursor.fetchone()
     task_time = (datetime.datetime.now() - task_start).total_seconds()
     return (task_time, result,)
@@ -160,17 +160,11 @@ def query_cpu_stats(cursor, data):
 
 def sqlalchemy_query_cpu_stats(db_session, data):
     task_start = datetime.datetime.now()
-    #host, start, end = data
-    params = {
-        'host': data[0],
-        'start': data[1],
-        'end': data[2]
-    }
     q = ('SELECT avg(usage) '
          'FROM cpu_usage '
-         'WHERE host = :host AND ts > :start and ts < :end')
+         'WHERE host = :hostname AND ts > :start_time and ts < :end_time')
     logger.info(q)
-    result = db_session.execute(q, params).fetchone()
+    result = db_session.execute(q, data).fetchone()
     result = result.items()
     if result:
         result = result[0][1]
