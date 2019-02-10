@@ -30,35 +30,41 @@ class UnknownDBClient(Exception):
     pass
 
 
+TASK_LOOKUP = {
+    'timescaledb': {
+        'psycopg2': timescaledb_cpu_stats,
+        'sqlalchemy': timescalealchemy_cpu_stats
+    },
+    'postgres' : {
+        'psycopg2': postgres_cpu_stats,
+        'sqlalchemy': sqlalchemy_cpu_stats
+    },
+}
+
+def pick_cpu_stat_task(db, client):
+    db_lookup = TASK_LOOKUP.get(db)
+    if not db_lookup:
+        raise UnknownDBClient(client)
+
+    task_function = db_lookup.get(client)
+    if not task_function:
+        raise UnknownDBClient(client)
+
+
 def query_stats(csv=None, db=None, client=None, loadbalance=None, number_runs=None):
     if not number_runs:
         number_runs = 1
     if not db:
         db = "timescaledb"
+
     logger.info(client)
     if client is None:
-        client = "psycopg2"
-        #client = "sqlalchemy"
+        #client = "psycopg2"
+        client = "sqlalchemy"
 
-    cpu_stats = None
-    if db == "postgres":
-        if client == "psycopg2":
-            cpu_stats = postgres_cpu_stats
-        elif client == "sqlalchemy":
-            cpu_stats = sqlalchemy_cpu_stats
-        else:
-            raise UnknownDBClient(client)
-    elif db == "timescaledb":
-        if client == "psycopg2":
-            cpu_stats = timescaledb_cpu_stats
-        elif client == "sqlalchemy":
-            cpu_stats = timescalealchemy_cpu_stats
-        else:
-            raise UnknownDBClient(client)
-    else:
-        raise UnknownDB(db)
     logger.info("Database: {}".format(db))
     logger.info("Client: {}".format(client))
+    cpu_stats = pick_cpu_stat_task(db, client)
 
     csv = csv.split('\n')
     # Figure out queues for load balancing

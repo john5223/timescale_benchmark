@@ -54,6 +54,17 @@ services:
       - "postgres"
       - "timescaledb"
 
+  worker_golang:
+    build:
+      context:  ./worker_golang
+      dockerfile: Dockerfile
+    env_file:
+      - dev.env
+    depends_on:
+      - "redis"
+      - "postgres"
+      - "timescaledb"
+
   worker_stats:
     build:
       context:  ./worker_simple

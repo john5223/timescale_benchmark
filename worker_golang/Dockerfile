@@ -1,13 +1,15 @@
 FROM golang:1.8.3-alpine
 
-#ENV webserver_path /go/src/github.com/perriea/webserver/
-#ENV PATH $PATH:$webserver_path
+RUN apk add --no-cache git
+RUN go get -v github.com/gocelery/gocelery
+RUN apk del git
 
-#WORKDIR $webserver_path
-#COPY webserver/ .
+COPY worker.go/ .
+
+ENV PORT=3001
+CMD ["go", "run", "main.go"]
 
 #RUN apk -Uuv add openssl
 #RUN sh "$(pwd)/ssl/install.sh"
 #RUN go build .
-#ENTRYPOINT ./webserver
 #EXPOSE 80 443

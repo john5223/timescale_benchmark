@@ -208,6 +208,7 @@ Current image sizes:
 	postgres                           latest              d03e2a8f3ed4        4 days ago          312MB
 	timescale/timescaledb              latest-pg10         7e9955d3c0f7        5 days ago          87.8MB
 
+
 Call tasks using signatures instead of importing the tasks from the api.
 
 Do this so we can have small api container, small worker container, and heavy numpy worker container seperate so we can scale them differently.
